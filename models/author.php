@@ -33,10 +33,17 @@ class JSON_API_Author {
   }
   
   function set_value($key, $wp_key = false) {
+    global $json_api;
+
     if (!$wp_key) {
       $wp_key = $key;
     }
-    $this->$key = get_the_author_meta($wp_key, $this->id);
+
+    if ($json_api->include_value($key)) {
+      $this->$key = get_the_author_meta($wp_key, $this->id);
+    } else {
+      unset($this->$key);
+    }
   }
   
   function set_author_meta() {

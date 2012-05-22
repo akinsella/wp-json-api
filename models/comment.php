@@ -26,6 +26,7 @@ class JSON_API_Comment {
     $this->name = $wp_comment->comment_author;
     $this->url = $wp_comment->comment_author_url;
     $this->date = date($date_format, strtotime($wp_comment->comment_date));
+    $content = htmlspecialchars($content, ENT_QUOTES);
     $this->content = $content;
     $this->parent = (int) $wp_comment->comment_parent;
     //$this->raw = $wp_comment;

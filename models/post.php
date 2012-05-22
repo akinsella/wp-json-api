@@ -165,6 +165,7 @@ class JSON_API_Post {
       $content = get_the_content($json_api->query->read_more);
       $content = apply_filters('the_content', $content);
       $content = str_replace(']]>', ']]&gt;', $content);
+      $content = htmlspecialchars($content, ENT_QUOTES);
       $this->content = $content;
     } else {
       unset($this->content);

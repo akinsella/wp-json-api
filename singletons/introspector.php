@@ -1,5 +1,7 @@
 <?php
 
+@ini_set('display_errors', 0);
+
 class JSON_API_Introspector {
   
   public function get_posts($query = false, $wp_posts = false) {
@@ -12,6 +14,22 @@ class JSON_API_Introspector {
         $output[] = $post;
       } else {
         $output[] = new JSON_API_Post($post);
+      }
+    }
+    return $output;
+  }
+
+  public function get_posts_sync_data($query = false, $wp_posts = false) {
+    global $post;
+    $this->set_posts_query_no_limit($query);
+
+    $output = array();
+    while (have_posts()) {
+      the_post();
+      if ($wp_posts) {
+        $output[] = $post;
+      } else {
+        $output[] = new JSON_API_Post_Sync_Data($post);
       }
     }
     return $output;
@@ -285,6 +303,37 @@ class JSON_API_Introspector {
       $query['posts_per_page'] = $json_api->query->count;
     }
     
+    if ($json_api->query->post_type) {
+      $query['post_type'] = $json_api->query->post_type;
+    }
+    
+    if (!empty($query)) {
+      query_posts($query);
+    }
+  }
+
+  protected function set_posts_query_no_limit($query = false) {
+    global $json_api, $wp_query;
+    
+    if (!$query) {
+      $query = array();
+    }
+    
+    $query = array_merge($query, $wp_query->query);
+
+//    $query['paged'] = 1;
+       
+    if ($json_api->query->page) {
+      $query['paged'] = $json_api->query->page;
+    }
+
+    if ($json_api->query->count) {
+      $query['posts_per_page'] = $json_api->query->count;
+    }
+    else {
+      $query['posts_per_page'] = 100;
+    }
+
     if ($json_api->query->post_type) {
       $query['post_type'] = $json_api->query->post_type;
     }

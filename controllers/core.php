@@ -42,6 +42,12 @@ class JSON_API_Core_Controller {
     return $this->posts_result($posts);
   }
   
+  public function get_posts_sync_data() {
+    global $json_api;
+    $posts = $json_api->introspector->get_posts_sync_data();
+    return $this->posts_result($posts);
+  }
+  
   public function get_post() {
     global $json_api, $post;
     extract($json_api->query->get(array('id', 'slug', 'post_id', 'post_slug')));

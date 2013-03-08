@@ -14,6 +14,7 @@ $dir = json_api_dir();
 @include_once "$dir/singletons/introspector.php";
 @include_once "$dir/singletons/response.php";
 @include_once "$dir/models/post.php";
+@include_once "$dir/models/post_sync_data.php";
 @include_once "$dir/models/comment.php";
 @include_once "$dir/models/category.php";
 @include_once "$dir/models/tag.php";

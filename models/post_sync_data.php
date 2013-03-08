@@ -8,7 +8,7 @@ class JSON_API_Post_Sync_Data {
   var $id;              // Integer
   var $slug;            // String
   var $url;             // String
-  var $title_plain;     // String
+  var $title;           // String
   var $date;            // String (modified by date_format query var)
   var $modified;        // String (modified by date_format query var)
   
@@ -26,7 +26,7 @@ class JSON_API_Post_Sync_Data {
     $this->set_value('slug', $wp_post->post_name);
 
     $this->set_value('url', get_permalink($this->id));
-    $this->set_value('title_plain', strip_tags(htmlspecialchars($wp_post->post_title)));
+    $this->set_value('title', strip_tags(htmlspecialchars($wp_post->post_title)));
     $this->set_value('date', get_the_time($date_format));
     $this->set_value('modified', date($date_format, strtotime($wp_post->post_modified)));
 

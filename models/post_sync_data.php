@@ -11,7 +11,8 @@ class JSON_API_Post_Sync_Data {
   var $title;           // String
   var $date;            // String (modified by date_format query var)
   var $modified;        // String (modified by date_format query var)
-  
+  var $comment_count;   // Integer
+
   function JSON_API_Post_Sync_Data($wp_post = null) {
     if (!empty($wp_post)) {
       $this->import_wp_object($wp_post);

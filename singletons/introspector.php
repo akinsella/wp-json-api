@@ -12,7 +12,7 @@ class JSON_API_Introspector {
       the_post();
       if ($wp_posts) {
         $output[] = $post;
-      } else {
+      } else if($post->post_status == 'publish') {
         $output[] = new JSON_API_Post($post);
       }
     }
@@ -28,7 +28,7 @@ class JSON_API_Introspector {
       the_post();
       if ($wp_posts) {
         $output[] = $post;
-      } else {
+      } else if($post->post_status == 'publish' && $post->post_type == 'post') {
         $output[] = new JSON_API_Post_Sync_Data($post);
       }
     }
@@ -96,6 +96,18 @@ class JSON_API_Introspector {
     return $categories;
   }
   
+  public function get_categories_sync_Data() {
+    $wp_categories = get_categories();
+    $categories = array();
+    foreach ($wp_categories as $wp_category) {
+      if ($wp_category->term_id == 1 && $wp_category->slug == 'uncategorized') {
+        continue;
+      }
+      $categories[] = $this->get_category_object_sync_data($wp_category);
+    }
+    return $categories;
+  }
+  
   public function get_current_category() {
     global $json_api;
     extract($json_api->query->get(array('id', 'slug', 'category_id', 'category_slug')));
@@ -128,6 +140,11 @@ class JSON_API_Introspector {
   public function get_tags() {
     $wp_tags = get_tags();
     return array_map(array(&$this, 'get_tag_object'), $wp_tags);
+  }
+  
+  public function get_tags_sync_data() {
+    $wp_tags = get_tags();
+    return array_map(array(&$this, 'get_tag_object_sync_data'), $wp_tags);
   }
   
   public function get_current_tag() {
@@ -174,6 +191,21 @@ class JSON_API_Introspector {
     return $active_authors;
   }
   
+  public function get_authors_sync_data() {
+    global $wpdb;
+    $author_ids = $wpdb->get_col($wpdb->prepare("
+      SELECT u.ID, m.meta_value AS last_name
+      FROM $wpdb->users AS u,
+           $wpdb->usermeta AS m
+      WHERE m.user_id = u.ID
+        AND m.meta_key = 'last_name'
+      ORDER BY last_name
+    "));
+    $all_authors = array_map(array(&$this, 'get_author_by_id_sync_data'), $author_ids);
+    $active_authors = array_filter($all_authors, array(&$this, 'is_active_author'));
+    return $active_authors;
+  }
+  
   public function get_current_author() {
     global $json_api;
     extract($json_api->query->get(array('id', 'slug', 'author_id', 'author_slug')));
@@ -199,6 +231,14 @@ class JSON_API_Introspector {
       return null;
     }
     return new JSON_API_Author($id);
+  }
+  
+  public function get_author_by_id_sync_data($id) {
+    $id = get_the_author_meta('ID', $id);
+    if (!$id) {
+      return null;
+    }
+    return new JSON_API_Author_Sync_Data($id);
   }
   
   public function get_author_by_login($login) {
@@ -267,11 +307,25 @@ class JSON_API_Introspector {
     return new JSON_API_Category($wp_category);
   }
   
+  protected function get_category_object_sync_data($wp_category) {
+    if (!$wp_category) {
+      return null;
+    }
+    return new JSON_API_Category_Sync_Data($wp_category);
+  }
+  
   protected function get_tag_object($wp_tag) {
     if (!$wp_tag) {
       return null;
     }
     return new JSON_API_Tag($wp_tag);
+  }
+ 
+  protected function get_tag_object_sync_data($wp_tag) {
+    if (!$wp_tag) {
+      return null;
+    }
+    return new JSON_API_Tag_Sync_Data($wp_tag);
   }
   
   protected function is_active_author($author) {

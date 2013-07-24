@@ -42,6 +42,12 @@ class JSON_API_Core_Controller {
     return $this->posts_result($posts);
   }
   
+  public function get_recent_posts_sync_data() {
+    global $json_api;
+    $posts = $json_api->introspector->get_posts_sync_data();
+    return $this->posts_result($posts);
+  }
+  
   public function get_posts_sync_data() {
     global $json_api;
     $posts = $json_api->introspector->get_posts_sync_data();
@@ -156,6 +162,27 @@ class JSON_API_Core_Controller {
     }
     return $this->posts_result($posts);
   }
+ 
+  public function get_date_posts_sync_data() {
+    global $json_api;
+    if ($json_api->query->date) {
+      $date = preg_replace('/\D/', '', $json_api->query->date);
+      if (!preg_match('/^\d{4}(\d{2})?(\d{2})?$/', $date)) {
+        $json_api->error("Specify a date var in one of 'YYYY' or 'YYYY-MM' or 'YYYY-MM-DD' formats.");
+      }
+      $request = array('year' => substr($date, 0, 4));
+      if (strlen($date) > 4) {
+        $request['monthnum'] = (int) substr($date, 4, 2);
+      }
+      if (strlen($date) > 6) {
+        $request['day'] = (int) substr($date, 6, 2);
+      }
+      $posts = $json_api->introspector->get_posts_sync_data($request);
+    } else {
+      $json_api->error("Include 'date' var in your request.");
+    }
+    return $this->posts_result($posts);
+  }
   
   public function get_category_posts() {
     global $json_api;
@@ -164,6 +191,18 @@ class JSON_API_Core_Controller {
       $json_api->error("Not found.");
     }
     $posts = $json_api->introspector->get_posts(array(
+      'cat' => $category->id
+    ));
+    return $this->posts_object_result($posts, $category);
+  }
+
+  public function get_category_posts_sync_data() {
+    global $json_api;
+    $category = $json_api->introspector->get_current_category();
+    if (!$category) {
+      $json_api->error("Not found.");
+    }
+    $posts = $json_api->introspector->get_posts_sync_data(array(
       'cat' => $category->id
     ));
     return $this->posts_object_result($posts, $category);
@@ -181,6 +220,18 @@ class JSON_API_Core_Controller {
     return $this->posts_object_result($posts, $tag);
   }
   
+  public function get_tag_posts_sync_data() {
+    global $json_api;
+    $tag = $json_api->introspector->get_current_tag();
+    if (!$tag) {
+      $json_api->error("Not found.");
+    }
+    $posts = $json_api->introspector->get_posts_sync_data(array(
+      'tag' => $tag->slug
+    ));
+    return $this->posts_object_result($posts, $tag);
+  }
+  
   public function get_author_posts() {
     global $json_api;
     $author = $json_api->introspector->get_current_author();
@@ -188,6 +239,18 @@ class JSON_API_Core_Controller {
       $json_api->error("Not found.");
     }
     $posts = $json_api->introspector->get_posts(array(
+      'author' => $author->id
+    ));
+    return $this->posts_object_result($posts, $author);
+  }
+
+  public function get_author_posts_sync_data() {
+    global $json_api;
+    $author = $json_api->introspector->get_current_author();
+    if (!$author) {
+      $json_api->error("Not found.");
+    }
+    $posts = $json_api->introspector->get_posts_sync_data(array(
       'author' => $author->id
     ));
     return $this->posts_object_result($posts, $author);

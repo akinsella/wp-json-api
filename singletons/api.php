@@ -63,7 +63,7 @@ class JSON_API {
   }
   
   function admin_menu() {
-    add_options_page('JSON API Settings', 'JSON API', 'manage_options', 'json-api', array(&$this, 'admin_options'));
+    add_options_page('WP JSON API Settings', 'WP JSON API', 'manage_options', 'wp-json-api', array(&$this, 'admin_options'));
   }
   
   function admin_options() {
@@ -116,7 +116,7 @@ class JSON_API {
 <div class="wrap">
   <div id="icon-options-general" class="icon32"><br /></div>
   <h2>JSON API Settings</h2>
-  <form action="options-general.php?page=json-api" method="post">
+  <form action="options-general.php?page=wp-json-api" method="post">
     <?php wp_nonce_field('update-options'); ?>
     <h3>Controllers</h3>
     <?php $this->print_controller_actions(); ?>

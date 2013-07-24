@@ -1,11 +1,12 @@
 <?php
 /*
-Plugin Name: JSON API
-Plugin URI: http://wordpress.org/extend/plugins/json-api/
-Description: A RESTful API for WordPress
-Version: 1.0.7
-Author: Dan Phiffer
-Author URI: http://phiffer.org/
+Plugin Name: WP JSON API
+Plugin URI: http://wordpress.org/extend/plugins/wp-json-api/
+Description: Fork of A RESTful API for WordPress
+Version: 1.0.1
+Author: Dan Phiffer forked by Alexis Kinsella
+Author URI: http://blog.helyx.org/2012/05/fork-du-plugin-wordpress-wp-json-api-disponible-sur-github/
+See Also:  http://phiffer.org
 */
 
 $dir = json_api_dir();

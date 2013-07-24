@@ -30,6 +30,7 @@ class JSON_API_Post_Sync_Data {
     $this->set_value('title', strip_tags(htmlspecialchars($wp_post->post_title)));
     $this->set_value('date', get_the_time($date_format));
     $this->set_value('modified', date($date_format, strtotime($wp_post->post_modified)));
+    $this->set_value('comment_count', (int) $wp_post->comment_count);
 
     $this->set_categories_value();
     $this->set_tags_value();
@@ -45,7 +46,6 @@ class JSON_API_Post_Sync_Data {
     }
   }
 
-  
   function set_categories_value() {
     global $json_api;
     if ($json_api->include_value('categories')) {

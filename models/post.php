@@ -133,10 +133,13 @@ class JSON_API_Post {
     $this->set_value('slug', $wp_post->post_name);
     $this->set_value('url', get_permalink($this->id));
     $this->set_value('status', $wp_post->post_status);
-    $this->set_value('title', htmlspecialchars($wp_post->post_title));
-    $this->set_value('title_plain', strip_tags(htmlspecialchars($wp_post->post_title)));
+    $this->set_value('title', $wp_post->post_title);
+//    $this->set_value('title', htmlspecialchars($wp_post->post_title, ENT_QUOTES));
+    $this->set_value('title_plain', strip_tags($wp_post->post_title));
+//    $this->set_value('title_plain', strip_tags(htmlspecialchars($wp_post->post_title, ENT_QUOTES)));
     $this->set_content_value();
-    $this->set_value('excerpt', htmlspecialchars($wp_post->post_excerpt));
+    $this->set_value('excerpt', $wp_post->post_excerpt);
+//    $this->set_value('excerpt', htmlspecialchars($wp_post->post_excerpt, ENT_QUOTES));
     $this->set_value('date', get_the_time($date_format));
     $this->set_value('modified', date($date_format, strtotime($wp_post->post_modified)));
     $this->set_categories_value();
@@ -165,7 +168,7 @@ class JSON_API_Post {
       $content = get_the_content($json_api->query->read_more);
  //     $content = apply_filters('the_content', $content);
       $content = str_replace(']]>', ']]&gt;', $content);
-      $content = htmlspecialchars($content);
+//      $content = htmlspecialchars($content, ENT_QUOTES);
       $this->content = $content;
     } else {
       unset($this->content);

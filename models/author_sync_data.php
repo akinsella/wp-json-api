@@ -34,7 +34,8 @@ class JSON_API_Author_Sync_Data {
     }
 
     if ($json_api->include_value($key)) {
-      $this->$key = htmlspecialchars(get_the_author_meta($wp_key, $this->id));
+      $this->$key = get_the_author_meta($wp_key, $this->id);
+//      $this->$key = htmlspecialchars(get_the_author_meta($wp_key, $this->id), ENT_QUOTES);
     } else {
       unset($this->$key);
     }

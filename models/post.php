@@ -138,7 +138,7 @@ class JSON_API_Post {
     $this->set_value('title_plain', strip_tags($wp_post->post_title));
 //    $this->set_value('title_plain', strip_tags(htmlspecialchars($wp_post->post_title, ENT_QUOTES)));
     $this->set_content_value();
-    $this->set_value('excerpt', $wp_post->post_excerpt);
+    $this->set_value('excerpt', get_the_excerpt());
 //    $this->set_value('excerpt', htmlspecialchars($wp_post->post_excerpt, ENT_QUOTES));
     $this->set_value('date', get_the_time($date_format));
     $this->set_value('modified', date($date_format, strtotime($wp_post->post_modified)));

@@ -24,6 +24,7 @@ $dir = json_api_dir();
 @include_once "$dir/models/author.php";
 @include_once "$dir/models/author_sync_data.php";
 @include_once "$dir/models/attachment.php";
+@include_once "$dir/models/term.php";
 
 function json_api_init() {
   global $json_api;

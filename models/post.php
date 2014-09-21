@@ -25,6 +25,7 @@ class JSON_API_Post {
   var $comment_status;  // String ("open" or "closed")
   var $thumbnail;       // String
   var $custom_fields;   // Object (included by using custom_fields query var)
+  var $terms;           // Object (included by using terms query var)
   
   function JSON_API_Post($wp_post = null) {
     if (!empty($wp_post)) {
@@ -151,6 +152,7 @@ class JSON_API_Post {
     $this->set_value('comment_status', $wp_post->comment_status);
     $this->set_thumbnail_value();
     $this->set_custom_fields_value();
+    $this->set_terms_value();
   }
   
   function set_value($key, $value) {
@@ -266,6 +268,27 @@ class JSON_API_Post {
       }
     } else {
       unset($this->custom_fields);
+    }
+  }
+  
+  function set_terms_value() {
+    global $json_api;
+    if ($json_api->include_value('terms') &&
+        $json_api->query->terms) {
+      $keys = explode(',', $json_api->query->terms);
+      $this->terms = array();
+      foreach ($keys as $key) {
+        if ($wp_terms = get_the_terms($this->id, $key)) {
+          if (get_class($wp_terms) != 'WP_Error') {
+            foreach ($wp_terms as $wp_term) {
+              $term = new JSON_API_Term($wp_term);
+              $this->terms[$term->taxonomy][] = $term;
+            }
+          }
+        }
+      }
+    } else {
+      unset($this->terms);
     }
   }
   
